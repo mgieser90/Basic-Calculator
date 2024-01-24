@@ -7,6 +7,7 @@ const equalsButton = document.getElementById('equals');
 const operatorButtons = document.querySelectorAll('.button-operator');
 const decimalButton = document.getElementById('decimal');
 let equalButtonClickCounter = 0;
+let hasSeenEasterEgg = false;
 
 //Adds the number to the display
 numberButtons.forEach(numberButton => {
@@ -94,20 +95,23 @@ function easterEgg(numberText){
   switch(numberText) { 
     case "42":
       equalButtonClickCounter = 0;
+      hasSeenEasterEgg = true;
       return "The answer to the ultimate question of life, the universe, and everything."; 
         break;
     case "8008":
       equalButtonClickCounter = 0;
+      hasSeenEasterEgg = true;
       return "Really?...";
         break;
     case "5318008":
       equalButtonClickCounter = 0;
+      hasSeenEasterEgg = true;
       return  "Are you really flipping your device upside-down?";
         break;
     default:
-      if (equalButtonClickCounter === 5) {
+      if (equalButtonClickCounter === 5 && hasSeenEasterEgg === false) {
         return "Haven't found any easter eggs yet?";
-      } else if (equalButtonClickCounter === 10) {
+      } else if (equalButtonClickCounter === 10 && hasSeenEasterEgg === false) {
         return "Maybe try 21*2..."
       }
       return "";
