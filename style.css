@@ -24,8 +24,9 @@ html {
   display: flex;
   align-items: flex-end;
   flex-direction: column;
+  overflow: hidden;
 }
-#clear {
+#clear, #equals {
   grid-column: span 2;
 }
 button {
