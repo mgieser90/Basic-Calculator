@@ -6,8 +6,7 @@ const delButton = document.getElementById('backspace');
 const equalsButton = document.getElementById('equals');
 const operatorButtons = document.querySelectorAll('.button-operator');
 const decimalButton = document.getElementById('decimal');
-let equalButtonClickCounter = 0;
-let hasSeenEasterEgg = false;
+const polarityButton = document.getElementById('polarity');
 
 //Adds the number to the display
 numberButtons.forEach(numberButton => {
@@ -34,7 +33,7 @@ delButton.addEventListener('click', () => {
 operatorButtons.forEach(operatorButton => {
   operatorButton.addEventListener('click', () => {
     easterEggText.textContent = "";
-    displayText.textContent == "" || 
+    displayText.textContent === "" || 
       displayText.textContent.endsWith('/') ||  
       displayText.textContent.endsWith('*') || 
       displayText.textContent.endsWith('-') || 
@@ -51,13 +50,45 @@ decimalButton.addEventListener('click', () => {
   }
 });
 
+//Changes the polarity of the most recent number in the display
+polarityButton.addEventListener('click', () => {
+  const parts = displayText.textContent.split(/([\+\-\*\/])/).filter(Boolean);
+  for (let i = 0; i < parts.length; i++) {
+    if (parts[i] === '-' && i === 0 || parts[i] === '-' && /([\+\-\*\/])/.test(parts[i - 1].slice(-1))) {
+      const negative = [parts[i], parts[i + 1]].join('');
+      parts.splice(i, 2, negative);
+      i = -1;
+    }
+  }
+  if (parts.length > 0 && /[\+\-\*\/]/.test(parts[parts.length - 1].charAt(parts[parts.length - 1].length - 1))) {
+    return;
+  }
+  parts[parts.length - 1] = (parseFloat(parts[parts.length - 1])) * -1;
+  displayText.textContent = parts.join('');
+});
+
 //Computes the math that is in the display following proper order of operations
 equalsButton.addEventListener('click', () => {
+  if (displayText.textContent === '') {
+    return;
+  }
   equalButtonClickCounter++;
+  console.log(hasSeenEasterEgg);
+  console.log(easterEggsFound);
   console.log(equalButtonClickCounter);
+  console.log(hasSeen42EasterEgg)
   const parts = displayText.textContent.split(/([\+\-\*\/])/).filter(Boolean);
+//This for loop keeps the "-" character from being seperated from the number it is attached to when a negative answer is given
+  for (let i = 0; i < parts.length; i++) {
+    if (parts[i] === '-' && i === 0 || parts[i] === '-' && /([\+\-\*\/])/.test(parts[i - 1].slice(-1))) {
+      const negative = [parts[i], parts[i + 1]].join('');
+      parts.splice(i, 2, negative);
+      i = -1;
+    }
+  }
 
-  if (parts.length > 0 && /([\+\-\*\/])/.test(parts[parts.length - 1])) {
+  if (parts.length > 0 && /[\+\-\*\/]/.test(parts[parts.length - 1].charAt(parts[parts.length - 1].length - 1))
+) {
     displayText.textContent = displayText.textContent;
     window.alert("Cannot calculate with equation ending with an operator");
   } else {
@@ -85,27 +116,53 @@ equalsButton.addEventListener('click', () => {
         i = -1;
       }
     }
-    displayText.textContent = parts;
-  }
-  easterEggText.textContent = easterEgg(displayText.textContent)
-  
+    }
+  const numToCheck = parseFloat(parts.join(''));
+
+  // Checks the number of decimal places and rounds the answer to the nearest 4th decimal place if needed
+  const decimalPlaces = (numToCheck.toString().split('.')[1] || '').length;
+  const roundedResult = decimalPlaces >= 4 ? numToCheck.toFixed(4) : numToCheck;
+  displayText.textContent = roundedResult.toString();
+  easterEggText.textContent = easterEgg(displayText.textContent);
 });
 
+//Displays the easter egg text when the user presses the equals button and the answer or number on the display matches one of these switch cases
 function easterEgg(numberText){
   switch(numberText) { 
     case "42":
-      equalButtonClickCounter = 0;
-      hasSeenEasterEgg = true;
+      if (hasSeen42EasterEgg === false) {
+        equalButtonClickCounter = 0;
+        easterEggsFound++;
+        hasSeenEasterEgg = true;
+        hasSeen42EasterEgg = true;
+      }
       return "The answer to the ultimate question of life, the universe, and everything."; 
         break;
+      case "7777777":
+      if (hasSeen7EasterEgg === false) {
+        equalButtonClickCounter = 0;
+        easterEggsFound++;
+        hasSeenEasterEgg = true;
+        hasSeen7EasterEgg = true;
+      }
+      return "WHAT'S IN THE BOX?!?!?!"; 
+        break;
     case "8008":
-      equalButtonClickCounter = 0;
-      hasSeenEasterEgg = true;
+      if (hasSeen8008EasterEgg === false) {
+        equalButtonClickCounter = 0;
+        easterEggsFound++;
+        hasSeenEasterEgg = true;
+        hasSeen8008EasterEgg = true;
+      }
       return "Really?...";
         break;
     case "5318008":
-      equalButtonClickCounter = 0;
-      hasSeenEasterEgg = true;
+      if (hasSeen5318008EasterEgg === false) {
+        equalButtonClickCounter = 0;
+        easterEggsFound++;
+        hasSeenEasterEgg = true;
+        hasSeen5318008EasterEgg = true;
+      }
       return  "Are you really flipping your device upside-down?";
         break;
     default:
@@ -113,8 +170,23 @@ function easterEgg(numberText){
         return "Haven't found any easter eggs yet?";
       } else if (equalButtonClickCounter === 10 && hasSeenEasterEgg === false) {
         return "Maybe try 21*2..."
-      }
+      } else if (equalButtonClickCounter === 20 && allEasterEggsFound === false) {
+        return "There are still more easter eggs to find..."; 
+      } else if (easterEggsFound === 4 && allEasterEggsFound === false) {
+        allEasterEggsFound = true;
+        return "You found all the easter eggs! Congratulations!";
+      } 
       return "";
     }
-  
+
 }
+
+//Easter egg tracking... shhhh!
+let equalButtonClickCounter = 0;
+let easterEggsFound = 0;
+let hasSeenEasterEgg = false;
+let hasSeen42EasterEgg = false;
+let hasSeen7EasterEgg = false;
+let hasSeen8008EasterEgg = false;
+let hasSeen5318008EasterEgg = false;
+let allEasterEggsFound = false;
