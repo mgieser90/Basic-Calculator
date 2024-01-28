@@ -28,16 +28,21 @@ delButton.addEventListener('click', () => {
   displayText.textContent = displayText.textContent.slice(0, -1);
 });
 
-//Adds the operator to the display while not allowing the user to add two operators in a row or before any numbers have been added 
-//Future feature: If last character is an operator, replace it with the new operator
+//Adds the operator to the display while not allowing an operator to be added to the display if the display is empty, if last character is an operator, replace it with the new operator
 operatorButtons.forEach(operatorButton => {
   operatorButton.addEventListener('click', () => {
-    easterEggText.textContent = "";
-    displayText.textContent === "" || 
-      displayText.textContent.endsWith('/') ||  
-      displayText.textContent.endsWith('*') || 
-      displayText.textContent.endsWith('-') || 
-      displayText.textContent.endsWith('+') ? null : displayText.textContent += operatorButton.textContent;
+    easterEggText.textContent = ""
+    if (displayText.textContent === "") {
+      return;
+    } else if (displayText.textContent.endsWith('/') ||
+               displayText.textContent.endsWith('*') || 
+               displayText.textContent.endsWith('-') || 
+               displayText.textContent.endsWith('+')) { 
+      displayText.textContent = displayText.textContent.slice(0, -1);
+      displayText.textContent += operatorButton.textContent;
+    } else {
+      displayText.textContent += operatorButton.textContent;
+    }
   });
 });
 
@@ -73,10 +78,6 @@ equalsButton.addEventListener('click', () => {
     return;
   }
   equalButtonClickCounter++;
-  console.log(hasSeenEasterEgg);
-  console.log(easterEggsFound);
-  console.log(equalButtonClickCounter);
-  console.log(hasSeen42EasterEgg)
   const parts = displayText.textContent.split(/([\+\-\*\/])/).filter(Boolean);
 //This for loop keeps the "-" character from being seperated from the number it is attached to when a negative answer is given
   for (let i = 0; i < parts.length; i++) {
@@ -87,10 +88,9 @@ equalsButton.addEventListener('click', () => {
     }
   }
 
-  if (parts.length > 0 && /[\+\-\*\/]/.test(parts[parts.length - 1].charAt(parts[parts.length - 1].length - 1))
-) {
-    displayText.textContent = displayText.textContent;
+  if (parts.length > 0 && /[\+\-\*\/]/.test(parts[parts.length - 1].charAt(parts[parts.length - 1].length - 1))) {
     window.alert("Cannot calculate with equation ending with an operator");
+    return;
   } else {
     for (let i = 0; i < parts.length; i++) {
       if (parts[i] === '/') {
